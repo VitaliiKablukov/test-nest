@@ -1,5 +1,6 @@
 import {
   HttpException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,12 +10,17 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from 'src/dto/login.dto';
 import { jwtConstants } from './constants';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UserService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    private jwtService: JwtService,
+  ) {}
 
   async registration(dto: CreateDto) {
     const user = await prisma.user.findMany({
@@ -65,7 +71,9 @@ export class UserService {
       },
       data: { token: token },
     });
-
+    await this.cacheManager.set('cached_item', { key: 32 });
+    const cachedItem = await this.cacheManager.get('cached_item');
+    console.log(cachedItem);
     return {
       user: user[0].email,
       token,

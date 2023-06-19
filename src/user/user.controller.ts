@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
-import { UsePipes } from '@nestjs/common/decorators';
+import { Inject, UsePipes } from '@nestjs/common/decorators';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { CreateDto } from 'src/dto/create.dto';
 import { UserService } from './user.service';
@@ -23,7 +23,7 @@ export class UserController {
   }
   @Post('logout')
   async logout(@Req() req: CustomRequest) {
-    const response = await this.userService.logout(req);
+    await this.userService.logout(req);
     return { message: 'Logout success' };
   }
 }
