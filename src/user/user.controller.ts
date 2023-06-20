@@ -19,7 +19,7 @@ export class UserController {
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const res = await this.userService.login(dto);
-    const cache = await this.userService.cacheGet();
+    const cache = await this.userService.getCache();
 
     return { res, cache };
   }

@@ -23,10 +23,10 @@ export class UserService implements OnModuleInit {
     private jwtService: JwtService,
   ) {}
   onModuleInit() {
-    this.myFunction();
+    this.setCache();
   }
 
-  async myFunction() {
+  async setCache() {
     for (let i = 0; i < 10; i++) {
       const res = await this.cacheManager.set(
         `number:${i}`,
@@ -99,7 +99,7 @@ export class UserService implements OnModuleInit {
     });
     return user;
   }
-  async cacheGet() {
+  async getCache() {
     const promises = [];
     for (let i = 0; i < 10; i++) {
       const res = await this.cacheManager.get(`number:${i}`);
