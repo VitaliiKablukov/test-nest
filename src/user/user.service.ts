@@ -2,6 +2,7 @@ import {
   HttpException,
   Inject,
   Injectable,
+  OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
@@ -16,19 +17,31 @@ import { Cache } from 'cache-manager';
 const prisma = new PrismaClient();
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     private jwtService: JwtService,
   ) {}
+  onModuleInit() {
+    this.myFunction();
+  }
 
+  async myFunction() {
+    for (let i = 0; i < 10; i++) {
+      const res = await this.cacheManager.set(
+        `number:${i}`,
+        { key: `number:${i}` },
+        6000,
+      );
+    }
+    console.log('Moduleinit');
+  }
   async registration(dto: CreateDto) {
     const user = await prisma.user.findMany({
       where: {
         email: dto.email,
       },
     });
-    console.log(user);
 
     if (user.length) {
       throw new HttpException('Email is already used', 409);
@@ -51,8 +64,6 @@ export class UserService {
       },
     });
 
-    console.log(user[0]);
-
     if (user.length == 0) {
       throw new UnauthorizedException();
     }
@@ -71,16 +82,14 @@ export class UserService {
       },
       data: { token: token },
     });
-    await this.cacheManager.set('cached_item', { key: 32 });
-    const cachedItem = await this.cacheManager.get('cached_item');
-    console.log(cachedItem);
+
     return {
       user: user[0].email,
       token,
     };
   }
   async logout(req) {
-    const user = prisma.user.update({
+    const user = await prisma.user.update({
       where: {
         id: req.user.id,
       },
@@ -89,5 +98,15 @@ export class UserService {
       },
     });
     return user;
+  }
+  async cacheGet() {
+    const promises = [];
+    for (let i = 0; i < 10; i++) {
+      const res = await this.cacheManager.get(`number:${i}`);
+
+      promises.push(res);
+    }
+
+    return promises;
   }
 }

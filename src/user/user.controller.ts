@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
-import { Inject, UsePipes } from '@nestjs/common/decorators';
+import { UsePipes } from '@nestjs/common/decorators';
 import { ValidationPipe } from '@nestjs/common/pipes';
 import { CreateDto } from 'src/dto/create.dto';
 import { UserService } from './user.service';
@@ -19,7 +19,9 @@ export class UserController {
   @Post('login')
   async login(@Body() dto: LoginDto) {
     const res = await this.userService.login(dto);
-    return res;
+    const cache = await this.userService.cacheGet();
+
+    return { res, cache };
   }
   @Post('logout')
   async logout(@Req() req: CustomRequest) {
