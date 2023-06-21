@@ -1,10 +1,10 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
-import { UsePipes } from '@nestjs/common/decorators';
+import { Get, UsePipes } from '@nestjs/common/decorators';
 import { ValidationPipe } from '@nestjs/common/pipes';
-import { CreateDto } from 'src/dto/create.dto';
+import { CreateDto } from '../dto/create.dto';
 import { UserService } from './user.service';
-import { LoginDto } from 'src/dto/login.dto';
-import { CustomRequest } from 'src/middlewares/authMiddlewares.service';
+import { LoginDto } from '../dto/login.dto';
+import { CustomRequest } from '../middlewares/authMiddlewares.service';
 
 @Controller('user')
 export class UserController {
@@ -21,9 +21,9 @@ export class UserController {
     const res = await this.userService.login(dto);
     const cache = await this.userService.getCache();
 
-    return { res, cache };
+    return { ...res, cache };
   }
-  @Post('logout')
+  @Get('logout')
   async logout(@Req() req: CustomRequest) {
     await this.userService.logout(req);
     return { message: 'Logout success' };

@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaClient } from '@prisma/client';
 
 import { Request, Response, NextFunction } from 'express';
-import { jwtConstants } from 'src/user/constants';
+import { jwtConstants } from '../user/constants';
 const prisma = new PrismaClient();
 
 @Injectable()

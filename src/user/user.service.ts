@@ -6,10 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { CreateDto } from 'src/dto/create.dto';
+import { CreateDto } from '../dto/create.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from 'src/dto/login.dto';
+import { LoginDto } from '../dto/login.dto';
 import { jwtConstants } from './constants';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
@@ -31,10 +31,9 @@ export class UserService implements OnModuleInit {
       const res = await this.cacheManager.set(
         `number:${i}`,
         { key: `number:${i}` },
-        6000,
+        360000,
       );
     }
-    console.log('Moduleinit');
   }
   async registration(dto: CreateDto) {
     const user = await prisma.user.findMany({

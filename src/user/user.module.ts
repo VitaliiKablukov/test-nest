@@ -1,17 +1,18 @@
+import { RedisClientOptions } from 'redis';
+import * as redisStore from 'cache-manager-redis-store';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
-import { AuthMiddleware } from 'src/middlewares/authMiddlewares.service';
+import { AuthMiddleware } from '../middlewares/authMiddlewares.service';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager';
-import { RedisClientOptions } from 'redis';
-import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     CacheModule.register<RedisClientOptions>({
+      isGlobal: true,
       store: redisStore,
       host: 'localhost',
       port: 6379,
